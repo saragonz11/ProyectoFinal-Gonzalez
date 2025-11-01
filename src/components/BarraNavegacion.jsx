@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import WidgetCarrito from "./WidgetCarrito";
-const API_BASE = "https://fakestoreapi.com";
+import { getCategories } from "../services/fakestore";
 
 const BarraNavegacion = () => {
   const [categories, setCategories] = useState([]);
@@ -10,8 +10,7 @@ const BarraNavegacion = () => {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetch(`${API_BASE}/products/categories`)
-      .then((r) => r.json())
+    getCategories()
       .then((cats) => {
         if (!cancelled) setCategories(cats);
       })

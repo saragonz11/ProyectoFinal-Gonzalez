@@ -1,24 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-
-const API_BASE = "https://fakestoreapi.com";
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function fetchProducts(categoryId) {
-  const endpoint = categoryId
-    ? `${API_BASE}/products/category/${encodeURIComponent(categoryId)}`
-    : `${API_BASE}/products`;
-  const res = await fetch(endpoint);
-  if (!res.ok) {
-    throw new Error("Error obteniendo productos");
-  }
-  const data = await res.json();
-  await delay(500);
-  return data;
-}
+import { useParams } from "react-router-dom";
+import { getProducts } from "../services/fakestore";
+import ProductGrid from "./ProductGrid";
 
 const ItemListContainer = ({ mensajeBienvenida }) => {
   const { categoryId } = useParams();
@@ -30,7 +13,7 @@ const ItemListContainer = ({ mensajeBienvenida }) => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchProducts(categoryId)
+    getProducts(categoryId)
       .then((items) => {
         if (!cancelled) setProducts(items);
       })
@@ -71,24 +54,7 @@ const ItemListContainer = ({ mensajeBienvenida }) => {
   return (
     <div className="contenedor-lista-productos">
       <h1 className="mensaje-bienvenida">{titulo}</h1>
-      <div className="grid-productos">
-        {products.map((product) => (
-          <article key={product.id} className="card-producto">
-            <Link to={`/item/${product.id}`} className="link-producto">
-              <img
-                src={product.image}
-                alt={product.title}
-                className="imagen-producto"
-                loading="lazy"
-              />
-              <div className="info-producto">
-                <h3 className="titulo-producto">{product.title}</h3>
-                <p className="precio-producto">${product.price}</p>
-              </div>
-            </Link>
-          </article>
-        ))}
-      </div>
+      <ProductGrid products={products} />
     </div>
   );
 };

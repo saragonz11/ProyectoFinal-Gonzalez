@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const API_BASE = "https://fakestoreapi.com";
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function fetchProductById(id) {
-  const res = await fetch(`${API_BASE}/products/${id}`);
-  if (!res.ok) throw new Error("Error obteniendo producto");
-  const data = await res.json();
-  await delay(400);
-  return data;
-}
+import { getProductById } from "../services/fakestore";
 
 const ItemDetailContainer = () => {
   const { id } = useParams();
@@ -26,7 +13,7 @@ const ItemDetailContainer = () => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchProductById(id)
+    getProductById(id)
       .then((p) => {
         if (!cancelled) setProduct(p);
       })
