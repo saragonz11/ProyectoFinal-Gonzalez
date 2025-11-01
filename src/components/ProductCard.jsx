@@ -2,6 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+  const formattedPrice = new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "USD",
+  }).format(product.price);
+
   return (
     <article className="card-producto">
       <Link to={`/item/${product.id}`} className="link-producto">
@@ -13,7 +18,7 @@ const ProductCard = ({ product }) => {
         />
         <div className="info-producto">
           <h3 className="titulo-producto">{product.title}</h3>
-          <p className="precio-producto">${product.price}</p>
+          <p className="precio-producto">{formattedPrice}</p>
         </div>
       </Link>
     </article>
@@ -21,5 +26,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
-
 
