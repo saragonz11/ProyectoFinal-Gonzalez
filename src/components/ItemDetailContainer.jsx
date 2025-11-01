@@ -80,24 +80,31 @@ const ItemDetailContainer = () => {
   return (
     <div className="item-detail-container">
       <div className="detalle">
-        <img
-          src={product.image}
-          alt={product.title}
-          className="detalle-imagen"
-        />
-        <div className="detalle-info">
-          <h2>{product.title}</h2>
-          <p className="detalle-categoria">{product.category}</p>
-          <p className="detalle-descripcion">{product.description}</p>
-          <p className="detalle-precio">{formattedPrice}</p>
-
-          <ItemCount
-            value={quantity}
-            min={1}
-            max={10}
-            onChange={handleQuantityChange}
-            onAdd={handleAddToCart}
+        <div className="detalle-imagen-wrapper">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="detalle-imagen"
           />
+        </div>
+        <div className="detalle-info">
+          <h2 className="detalle-titulo">{product.title}</h2>
+          <p className="detalle-categoria">{product.category}</p>
+          <div className="detalle-descripcion-wrapper">
+            <p className="detalle-descripcion">{product.description}</p>
+          </div>
+          <div className="detalle-precio-wrapper">
+            <p className="detalle-precio">{formattedPrice}</p>
+          </div>
+          <div className="detalle-controls">
+            <ItemCount
+              value={quantity}
+              min={1}
+              max={10}
+              onChange={handleQuantityChange}
+              onAdd={handleAddToCart}
+            />
+          </div>
         </div>
       </div>
     </div>

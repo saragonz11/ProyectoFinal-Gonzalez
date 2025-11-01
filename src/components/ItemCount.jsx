@@ -24,7 +24,7 @@ const ItemCount = ({ value = 1, min = 1, max = 10, onChange, onAdd }) => {
         aria-label="decrementar cantidad"
         onClick={handleDecrement}
         disabled={value <= min}
-        className="btn-count btn-decrement"
+        className="btn-count"
       >
         -
       </button>
@@ -36,7 +36,7 @@ const ItemCount = ({ value = 1, min = 1, max = 10, onChange, onAdd }) => {
         aria-label="incrementar cantidad"
         onClick={handleIncrement}
         disabled={value >= max}
-        className="btn-count btn-increment"
+        className="btn-count"
       >
         +
       </button>
@@ -44,7 +44,9 @@ const ItemCount = ({ value = 1, min = 1, max = 10, onChange, onAdd }) => {
         type="button"
         className="btn-agregar"
         onClick={handleAdd}
-        aria-label={`Agregar ${value} unidad${value !== 1 ? "es" : ""} al carrito`}
+        aria-label={`Agregar ${value} unidad${
+          value !== 1 ? "es" : ""
+        } al carrito`}
       >
         Agregar al carrito
       </button>
@@ -53,4 +55,3 @@ const ItemCount = ({ value = 1, min = 1, max = 10, onChange, onAdd }) => {
 };
 
 export default ItemCount;
-
