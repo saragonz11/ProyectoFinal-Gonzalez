@@ -161,5 +161,3 @@ npm run lint     # Ejecutar ESLint
 Diplomado de Desarrollo React - Coderhouse
 
 ---
-
-_Desarrollado con ❤️ usando React, React Router y Vite_
