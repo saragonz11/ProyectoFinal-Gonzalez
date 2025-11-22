@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ItemCount from "./ItemCount";
-
-const API_BASE = "https://fakestoreapi.com";
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function fetchProductById(id) {
-  const res = await fetch(`${API_BASE}/products/${id}`);
-  if (!res.ok) throw new Error("Error obteniendo producto");
-  const data = await res.json();
-  await delay(400);
-  return data;
-}
+import { useCart } from "../context/CartContext";
+import { getProductById } from "../services/firestoreService";
+import ItemDetail from "./ItemDetail";
 
 const ItemDetailContainer = () => {
   const { id } = useParams();
+  const { addItem, isInCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [itemAdded, setItemAdded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchProductById(id)
+    setItemAdded(false);
+
+    getProductById(id)
       .then((p) => {
-        if (!cancelled) setProduct(p);
+        if (!cancelled) {
+          setProduct(p);
+          // Verificar si el producto ya está en el carrito
+          setItemAdded(isInCart(p.id));
+        }
       })
       .catch((err) => {
         if (!cancelled) setError(err.message || "Error");
@@ -37,17 +33,21 @@ const ItemDetailContainer = () => {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, isInCart]);
 
   const handleQuantityChange = (newValue) => {
     setQuantity(newValue);
   };
 
   const handleAddToCart = (qty) => {
-    console.log({ id: product.id, qty });
+    if (product) {
+      addItem(product, qty);
+      setItemAdded(true);
+    }
   };
 
   if (loading) {
@@ -72,41 +72,15 @@ const ItemDetailContainer = () => {
 
   if (!product) return null;
 
-  const formattedPrice = new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "USD",
-  }).format(product.price);
-
   return (
     <div className="item-detail-container">
-      <div className="detalle">
-        <div className="detalle-imagen-wrapper">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="detalle-imagen"
-          />
-        </div>
-        <div className="detalle-info">
-          <h2 className="detalle-titulo">{product.title}</h2>
-          <p className="detalle-categoria">{product.category}</p>
-          <div className="detalle-descripcion-wrapper">
-            <p className="detalle-descripcion">{product.description}</p>
-          </div>
-          <div className="detalle-precio-wrapper">
-            <p className="detalle-precio">{formattedPrice}</p>
-          </div>
-          <div className="detalle-controls">
-            <ItemCount
-              value={quantity}
-              min={1}
-              max={10}
-              onChange={handleQuantityChange}
-              onAdd={handleAddToCart}
-            />
-          </div>
-        </div>
-      </div>
+      <ItemDetail
+        product={product}
+        quantity={quantity}
+        onQuantityChange={handleQuantityChange}
+        onAddToCart={handleAddToCart}
+        showItemCount={!itemAdded}
+      />
     </div>
   );
 };

@@ -1,25 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import ProductGrid from "./ProductGrid";
-
-const API_BASE = "https://fakestoreapi.com";
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function fetchProducts(categoryId) {
-  const endpoint = categoryId
-    ? `${API_BASE}/products/category/${encodeURIComponent(categoryId)}`
-    : `${API_BASE}/products`;
-  const res = await fetch(endpoint);
-  if (!res.ok) {
-    throw new Error("Error obteniendo productos");
-  }
-  const data = await res.json();
-  await delay(500);
-  return data;
-}
+import {
+  getProducts,
+  getProductsByCategory,
+} from "../services/firestoreService";
+import ItemList from "./ItemList";
 
 const ItemListContainer = ({ mensajeBienvenida }) => {
   const { categoryId } = useParams();
@@ -31,7 +16,12 @@ const ItemListContainer = ({ mensajeBienvenida }) => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    fetchProducts(categoryId)
+
+    const fetchData = categoryId
+      ? getProductsByCategory(categoryId)
+      : getProducts();
+
+    fetchData
       .then((items) => {
         if (!cancelled) setProducts(items);
       })
@@ -41,6 +31,7 @@ const ItemListContainer = ({ mensajeBienvenida }) => {
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
+
     return () => {
       cancelled = true;
     };
@@ -76,7 +67,7 @@ const ItemListContainer = ({ mensajeBienvenida }) => {
   return (
     <div className="contenedor-lista-productos">
       <h1 className="mensaje-bienvenida">{titulo}</h1>
-      <ProductGrid products={products} />
+      <ItemList products={products} />
     </div>
   );
 };

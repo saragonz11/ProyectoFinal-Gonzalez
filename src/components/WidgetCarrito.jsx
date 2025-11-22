@@ -1,11 +1,22 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const WidgetCarrito = () => {
+  const { getTotalQuantity } = useCart();
+  const totalQuantity = getTotalQuantity();
+
   return (
-    <div className="widget-carrito">
-      <span className="icono-carrito">🛒</span>
-      <span className="contador-carrito">0</span>
-    </div>
+    <Link to="/cart" className="widget-carrito-link">
+      <div className="widget-carrito">
+        <span className="icono-carrito">🛒</span>
+        {totalQuantity > 0 && (
+          <span className="contador-carrito" aria-live="polite">
+            {totalQuantity}
+          </span>
+        )}
+      </div>
+    </Link>
   );
 };
 
